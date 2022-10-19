@@ -1,0 +1,17 @@
+{
+  "name": "apps",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": "true",
+  "scripts": {
+    "start": "concurrently \"wsrun --parallel start\""
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "wsrun": "^5.2.0"
+  }
+}
