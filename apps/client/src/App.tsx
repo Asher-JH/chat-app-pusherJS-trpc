@@ -50,16 +50,16 @@ const AppContent = () => {
   const [message, setMessage] = useState("");
 
   // Queries
-  const groups = trpc.useQuery(["getGroups"]);
+  const groups = trpc.useQuery(["groups.getGroups"]);
   const messages = trpc.useQuery([
-    "getMessages",
+    "messages.getMessages",
     { groupId: selectedGroupId || "" },
   ]);
 
   // Mutations
-  const login = trpc.useMutation("login");
-  const createGroup = trpc.useMutation("addGroup");
-  const createMessage = trpc.useMutation("addMessage");
+  const login = trpc.useMutation("auth.login");
+  const createGroup = trpc.useMutation("groups.addGroup");
+  const createMessage = trpc.useMutation("messages.addMessage");
 
   // Subscribe
   const groupMessages = pusher.subscribe(selectedGroupId);
