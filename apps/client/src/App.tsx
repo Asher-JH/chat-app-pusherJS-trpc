@@ -51,7 +51,10 @@ const AppContent = () => {
 
   // Queries
   const groups = trpc.useQuery(["getGroups"]);
-  const messages = trpc.useQuery(["getMessages", selectedGroupId]);
+  const messages = trpc.useQuery([
+    "getMessages",
+    { groupId: selectedGroupId || "" },
+  ]);
 
   // Mutations
   const login = trpc.useMutation("login");

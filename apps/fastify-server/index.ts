@@ -8,7 +8,6 @@ import { z } from "zod";
 import fastify from "fastify";
 import cors from "@fastify/cors";
 import { PrismaClient } from "@prisma/client";
-
 import { pusher } from "./pusher";
 
 const prisma = new PrismaClient();
@@ -26,11 +25,13 @@ export type Context = inferAsyncReturnType<typeof createContext>;
 export const appRouter = trpc
   .router()
   .query("getMessages", {
-    input: z.string(),
+    input: z.object({
+      groupId: z.string(),
+    }),
     async resolve({ input }) {
       const messages = await prisma.message.findMany({
         where: {
-          groupId: input,
+          groupId: input.groupId,
         },
         include: {
           sender: true,
