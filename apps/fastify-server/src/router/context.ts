@@ -1,14 +1,20 @@
-import { inferAsyncReturnType } from "@trpc/server";
+import { inferAsyncReturnType, TRPCError } from "@trpc/server";
 import { type CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import jwt from "jsonwebtoken";
 
 // Context
-export function createContext({ req, res }: CreateFastifyContextOptions) {
-  const token = req.headers.authorization ?? "";
+export async function createContext({ req, res }: CreateFastifyContextOptions) {
+  async function getUser() {
+    const token = req.headers.authorization?.split(" ")[1] ?? "";
+    if (token) {
+      const payload = jwt.verify(token, "super-secret");
+      return payload as { id: string; username: string };
+    }
 
-  // decode JWT
-  // Fetch user
+    return null;
+  }
 
-  const user = {};
+  const user = await getUser();
 
   return { req, res, user };
 }

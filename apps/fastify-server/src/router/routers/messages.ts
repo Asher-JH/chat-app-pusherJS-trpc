@@ -1,9 +1,9 @@
 import { prisma } from "../../prisma";
 import { pusher } from "../../pusher";
-import { createRouter } from "../create-router";
+import { createProtectedRouter } from "../create-router";
 import { z } from "zod";
 
-export const messagesRouter = createRouter()
+export const messagesRouter = createProtectedRouter()
   .query("getMessages", {
     input: z.object({
       groupId: z.string(),

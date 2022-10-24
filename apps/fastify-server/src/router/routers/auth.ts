@@ -1,6 +1,8 @@
 import { prisma } from "../../prisma";
 import { createRouter } from "../create-router";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
+import { TRPCError } from "@trpc/server";
 
 export const authRouter = createRouter()
   .mutation("login", {
@@ -12,25 +14,37 @@ export const authRouter = createRouter()
         where: {
           username: input.username,
         },
+        select: {
+          id: true,
+          username: true,
+        },
       });
 
       if (!user) {
-        await prisma.user.create({
-          data: {
-            username: input.username,
-          },
-        });
+        throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      return user?.username || input.username;
+      const accessToken = jwt.sign(user, "super-secret", { expiresIn: "45s" });
+      const refreshToken = jwt.sign(user, "super-refresh", { expiresIn: "5m" });
+
+      return { accessToken, refreshToken };
     },
   })
-  .mutation("sign-up", {
+  .mutation("refresh-token", {
     input: z.object({
-      username: z.string(),
-      password: z.string(),
+      token: z.string(),
     }),
     resolve: async ({ input }) => {
-      return {};
+      jwt.verify(input.token, "super-refresh", (err, user) => {
+        if (err || !user) {
+          throw new TRPCError({ code: "UNAUTHORIZED" });
+        }
+        const accessToken = jwt.sign(user, "super-secret", {
+          expiresIn: "45s",
+        });
+        return {
+          accessToken,
+        };
+      });
     },
   });

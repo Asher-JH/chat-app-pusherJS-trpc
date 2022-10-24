@@ -1,8 +1,8 @@
 import { prisma } from "../../prisma";
-import { createRouter } from "../create-router";
+import { createProtectedRouter } from "../create-router";
 import { z } from "zod";
 
-export const groupsRouter = createRouter()
+export const groupsRouter = createProtectedRouter()
   .query("getGroups", {
     async resolve() {
       const groups = await prisma.group.findMany({});
