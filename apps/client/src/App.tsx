@@ -65,7 +65,7 @@ const AppContent = () => {
   const groupMessages = pusher.subscribe(selectedGroupId);
   groupMessages.bind("new-message", (d: any) => {
     console.log(d);
-    client.invalidateQueries("getGroups");
+    client.invalidateQueries("groups.getGroups");
   });
 
   const onLogin = () => {
@@ -89,7 +89,7 @@ const AppContent = () => {
       {
         onSuccess: (group) => {
           setSelectedGroupId(group.id);
-          client.invalidateQueries("getGroups");
+          client.invalidateQueries("groups.getGroups");
         },
       }
     );
@@ -105,7 +105,7 @@ const AppContent = () => {
       {
         onSuccess: () => {
           setMessage("");
-          client.invalidateQueries("getMessages");
+          client.invalidateQueries("messages.getMessages");
         },
       }
     );
