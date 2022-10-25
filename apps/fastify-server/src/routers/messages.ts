@@ -1,6 +1,6 @@
-import { prisma } from "../../prisma";
-import { pusher } from "../../pusher";
-import { createProtectedRouter } from "../create-router";
+import { prisma } from "../utils/prisma";
+import { pusher } from "../utils//pusher";
+import { createProtectedRouter } from "../utils/trpc";
 import { z } from "zod";
 
 export const messagesRouter = createProtectedRouter()

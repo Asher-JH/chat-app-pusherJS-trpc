@@ -1,5 +1,5 @@
-import { prisma } from "../../prisma";
-import { createRouter } from "../create-router";
+import { prisma } from "../utils//prisma";
+import { createRouter } from "../utils/trpc";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import { TRPCError } from "@trpc/server";
@@ -21,7 +21,10 @@ export const authRouter = createRouter()
       });
 
       if (!user) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User not found",
+        });
       }
 
       const accessToken = jwt.sign(user, "super-secret", { expiresIn: "45s" });
@@ -34,14 +37,23 @@ export const authRouter = createRouter()
     input: z.object({
       token: z.string(),
     }),
-    resolve: async ({ input }) => {
-      jwt.verify(input.token, "super-refresh", (err, user) => {
+    resolve: async ({ input, ctx }) => {
+      return jwt.verify(input.token, "super-refresh", (err, user) => {
         if (err || !user) {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Unable to verify token",
+          });
         }
-        const accessToken = jwt.sign(user, "super-secret", {
-          expiresIn: "45s",
-        });
+
+        const userData = user as { id: string; username: string };
+        const accessToken = jwt.sign(
+          { id: userData.id, username: userData.username },
+          "super-secret",
+          {
+            expiresIn: "45s",
+          }
+        );
         return {
           accessToken,
         };

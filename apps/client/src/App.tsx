@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Pusher from "pusher-js";
 
@@ -50,6 +50,11 @@ const AppContent = () => {
   const [message, setMessage] = useState("");
 
   // Queries
+  trpc.useQuery(["users.me"], {
+    onSuccess(user) {
+      setAuth(user.username);
+    },
+  });
   const groups = trpc.useQuery(["groups.getGroups"]);
   const messages = trpc.useQuery([
     "messages.getMessages",
@@ -74,8 +79,9 @@ const AppContent = () => {
         username,
       },
       {
-        onSuccess: (username) => {
-          setAuth(username);
+        onSuccess: ({ accessToken, refreshToken }) => {
+          localStorage.setItem("access-token", accessToken);
+          localStorage.setItem("refresh-token", refreshToken);
         },
       }
     );
@@ -208,6 +214,11 @@ const App = () => {
   const [trpcClient] = useState(() =>
     trpc.createClient({
       url: "http://localhost:5000/trpc",
+      headers() {
+        return {
+          authorization: "Bearer " + localStorage.getItem("access-token"),
+        };
+      },
     })
   );
 

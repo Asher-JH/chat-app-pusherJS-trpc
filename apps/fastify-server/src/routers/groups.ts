@@ -1,5 +1,5 @@
-import { prisma } from "../../prisma";
-import { createProtectedRouter } from "../create-router";
+import { prisma } from "../utils//prisma";
+import { createProtectedRouter } from "../utils/trpc";
 import { z } from "zod";
 
 export const groupsRouter = createProtectedRouter()
