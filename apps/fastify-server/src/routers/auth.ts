@@ -10,7 +10,9 @@ export const authRouter = createRouter()
       username: z.string(),
     }),
     async resolve({ input }) {
-      const user = await prisma.user.findUnique({
+      let user = null;
+
+      user = await prisma.user.findUnique({
         where: {
           username: input.username,
         },
@@ -21,9 +23,14 @@ export const authRouter = createRouter()
       });
 
       if (!user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User not found",
+        user = await prisma.user.create({
+          data: {
+            username: input.username,
+          },
+          select: {
+            id: true,
+            username: true,
+          },
         });
       }
 
