@@ -46,6 +46,7 @@ export const createProtectedRouter = () => {
     }
 
     return next({
+      // This makes `ctx.user` not-null for any following procedures
       ctx: {
         ...ctx,
         user: ctx.user,
