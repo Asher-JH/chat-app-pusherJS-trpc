@@ -15,3 +15,6 @@
 
 **Others:** TypeScript, tRCP, Pusher.js, zod
 
+
+
+Pull Requests / Improvements / Recommendations are welcome!
